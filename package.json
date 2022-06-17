@@ -1,0 +1,7 @@
+{
+  "name": "com.metrological.app.videoPlayerTest",
+  "description": "videoPlayerTest",
+  "dependencies": {
+    "@lightningjs/sdk": "^4.8.3"
+  }
+}
