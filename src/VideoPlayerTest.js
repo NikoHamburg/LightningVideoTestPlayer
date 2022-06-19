@@ -1,5 +1,6 @@
 import { VideoPlayer, Lightning } from "@lightningjs/sdk";
 import { Button } from "./Button";
+import { Logger } from "./Logger";
 
 class VideoPlayerTest extends Lightning.Component {
   static _template() {
@@ -75,36 +76,41 @@ class VideoPlayerTest extends Lightning.Component {
         _handleEnter() {
           switch (this.tag("Buttons").children[this.buttonIndex].buttonText) {
             case "Play": {
+              this.fireAncestors("$updateLogs", "Selected -> Play");
               VideoPlayer.play();
-              console.log(`${VideoPlayer.playing}`);
               break;
             }
             case "Pause": {
+              this.fireAncestors("$updateLogs", "Selected -> Pause");
               VideoPlayer.pause();
-              console.log(`${VideoPlayer.playing}`);
               break;
             }
             case "Stop": {
+              this.fireAncestors("$updateLogs", "Selected -> Stop");
               VideoPlayer.seek(0);
               break;
             }
             case "PlayPause": {
+              this.fireAncestors("$updateLogs", "Selected -> PlayPause");
               VideoPlayer.playPause();
-              console.log(`${VideoPlayer.playing}`);
               break;
             }
             case "StopFirst": {
+              this.fireAncestors("$updateLogs", "Selected -> stopFirst");
               VideoPlayer.seek(0);
               break;
             }
             case "StopLast": {
+              this.fireAncestors("$updateLogs", "Selected -> stopLast");
               VideoPlayer.seek(VideoPlayer.duration);
               break;
             }
             case "Loop": {
-              console.log(`Looped: ${VideoPlayer.looped}`);
               VideoPlayer.loop();
-              console.log(`Looped: ${VideoPlayer.looped}`);
+              this.fireAncestors(
+                "$updateLogs",
+                `Toggle Loop: loop ${VideoPlayer.looped}`
+              );
               break;
             }
           }
@@ -113,13 +119,101 @@ class VideoPlayerTest extends Lightning.Component {
     ];
   }
 
+  $videoPlayerAbort() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerAbort");
+  }
+
+  $videoPlayerCanPlay() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerCanPlay");
+  }
+
+  $videoPlayerCanPlayThrough() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerCanPlayThrough");
+  }
+
+  $videoPlayerDurationChange() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerDurationChange");
+  }
+
+  $videoPlayerEmptied() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerEmptied");
+  }
+
+  $videoPlayerEncrypted() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerEncrypted");
+  }
+
+  $videoPlayerEnded() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerEnded");
+  }
+
+  $videoPlayerError() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerError");
+  }
+
+  $videoPlayerInterruptBegin() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerInterruptBegin");
+  }
+
+  $videoPlayerInterruptEnd() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerInterruptEnd");
+  }
+
+  $videoPlayerLoadedData() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerLoadedData");
+  }
+
+  $videoPlayerLoadedMetaData() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerLoadedMetaData");
+  }
+
+  $videoPlayerLoadStart() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerLoadStart");
+  }
+
+  $videoPlayerPlay() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerPlay");
+  }
+
+  $videoPlayerPlaying() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerPlaying");
+  }
+
+  $videoPlayerProgress() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerProgress");
+  }
+
+  $videoPlayerRatechange() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerRatechange");
+  }
+
   $videoPlayerSeeked() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerSeeked");
     VideoPlayer.pause();
-    console.log(`${VideoPlayer.playing}`);
+  }
+
+  $videoPlayerSeeking() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerSeeking");
   }
 
   $videoPlayerStalled() {
-    console.log(`stalled`);
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerStalled");
+  }
+
+  // $videoPlayerTimeUpdate() {
+  //   this.fireAncestors("$updateLogs", "Event: $videoPlayerTimeUpdate");
+  // }
+
+  $videoPlayerVolumeChange() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerVolumeChange");
+  }
+
+  $videoPlayerWaiting() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerWaiting");
+  }
+
+  $videoPlayerClear() {
+    this.fireAncestors("$updateLogs", "Event: $videoPlayerClear");
   }
 }
 

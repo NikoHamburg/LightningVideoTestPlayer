@@ -17,27 +17,46 @@
  * limitations under the License.
  */
 
-import { Lightning, Utils } from "@lightningjs/sdk";
-import { VideoPlayerTest } from "./VideoPlayerTest";
+import { Router, Utils } from "@lightningjs/sdk";
+import { routes } from "./routes";
+import { Logger } from "./Logger";
 
-export default class App extends Lightning.Component {
+class App extends Router.App {
   static getFonts() {
     return [
       { family: "Regular", url: Utils.asset("fonts/Roboto-Regular.ttf") },
     ];
   }
 
+  _setup() {
+    Router.startRouter(routes, this);
+  }
+
   static _template() {
     return {
-      Video: {
-        type: VideoPlayerTest,
+      ...super._template(),
+      Widgets: {
+        Logger: {
+          type: Logger,
+          logText: "",
+        },
       },
     };
   }
 
   _init() {}
 
-  _getFocused() {
-    return this.tag("Video");
+  _handleDown() {
+    this.tag("Logger").setSmooth("y", 0);
+  }
+
+  _handleUp() {
+    this.tag("Logger").setSmooth("y", -400);
+  }
+
+  $updateLogs(logText) {
+    this.tag("Logger").updateLogs(logText);
   }
 }
+
+export { App };
