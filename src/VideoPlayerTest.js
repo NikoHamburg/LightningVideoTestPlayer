@@ -42,6 +42,16 @@ class VideoPlayerTest extends Lightning.Component {
           buttonText: "Loop",
           x: 1100,
         },
+        SeekButton: {
+          type: Button,
+          buttonText: "Seek",
+          x: 1250,
+        },
+        SkipButton: {
+          type: Button,
+          buttonText: "Skip",
+          x: 1400,
+        },
       },
     };
   }
@@ -106,8 +116,10 @@ class VideoPlayerTest extends Lightning.Component {
             }
             case "StopLast": {
               this.fireAncestors("$updateLogs", "Selected -> stopLast");
-              // VideoPlayer.seek(VideoPlayer.duratio - 0.5);
-              VideoPlayer.skip((VideoPlayer.duration - VideoPlayer.currentTime))
+              // VideoPlayer.seek(VideoPlayer.duration - 0.5);
+              VideoPlayer.skip(
+                VideoPlayer.duration - VideoPlayer.currentTime - 0.5
+              );
               break;
             }
             case "Loop": {
@@ -116,6 +128,16 @@ class VideoPlayerTest extends Lightning.Component {
                 "$updateLogs",
                 `Toggle Loop: loop ${VideoPlayer.looped}`
               );
+              break;
+            }
+            case 'Seek': {
+              VideoPlayer.seek(VideoPlayer.currentTime + 5);
+              this.fireAncestors('$updateLogs', `Seeking + 5s`)
+              break;
+            }
+            case 'Skip': {
+              VideoPlayer.skip(5);
+              this.fireAncestors('$updateLogs', `Skipping 5s`)
               break;
             }
           }
@@ -184,9 +206,9 @@ class VideoPlayerTest extends Lightning.Component {
     this.fireAncestors("$updateLogs", "Event: $videoPlayerPlaying");
   }
 
-  $videoPlayerProgress() {
-    this.fireAncestors("$updateLogs", "Event: $videoPlayerProgress");
-  }
+  // $videoPlayerProgress() {
+  // this.fireAncestors("$updateLogs", "Event: $videoPlayerProgress");
+  // }
 
   $videoPlayerRatechange() {
     this.fireAncestors("$updateLogs", "Event: $videoPlayerRatechange");
