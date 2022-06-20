@@ -1,4 +1,4 @@
-import { VideoPlayer, Lightning } from "@lightningjs/sdk";
+import { VideoPlayer, Lightning, Registry } from "@lightningjs/sdk";
 import { Button } from "./Button";
 import { Logger } from "./Logger";
 
@@ -55,6 +55,10 @@ class VideoPlayerTest extends Lightning.Component {
     );
     this.buttonIndex = 0;
     this._setState("Buttons");
+    // Registry.setTimeout(() => {
+    //   this.fireAncestors('$updateLogs', `isPlaying: ${VideoPlayer.playing}`)
+    //   VideoPlayer.seek(VideoPlayer.duration - 0.5);
+    // }, 2000);
   }
 
   static _states() {
@@ -102,7 +106,7 @@ class VideoPlayerTest extends Lightning.Component {
             }
             case "StopLast": {
               this.fireAncestors("$updateLogs", "Selected -> stopLast");
-              VideoPlayer.seek(VideoPlayer.duration);
+              VideoPlayer.seek(20398124);
               break;
             }
             case "Loop": {
@@ -189,7 +193,11 @@ class VideoPlayerTest extends Lightning.Component {
 
   $videoPlayerSeeked() {
     this.fireAncestors("$updateLogs", "Event: $videoPlayerSeeked");
-    VideoPlayer.pause();
+    // VideoPlayer.pause();
+    this.fireAncestors(
+      "$updateLogs",
+      `currentTime: ${VideoPlayer.currentTime} duration: ${VideoPlayer.duration} isPlaying: ${VideoPlayer.playing}`
+    );
   }
 
   $videoPlayerSeeking() {
