@@ -106,7 +106,8 @@ class VideoPlayerTest extends Lightning.Component {
             }
             case "StopLast": {
               this.fireAncestors("$updateLogs", "Selected -> stopLast");
-              VideoPlayer.seek(20398124);
+              // VideoPlayer.seek(VideoPlayer.duratio - 0.5);
+              VideoPlayer.skip((VideoPlayer.duration - VideoPlayer.currentTime))
               break;
             }
             case "Loop": {
@@ -193,7 +194,7 @@ class VideoPlayerTest extends Lightning.Component {
 
   $videoPlayerSeeked() {
     this.fireAncestors("$updateLogs", "Event: $videoPlayerSeeked");
-    // VideoPlayer.pause();
+    VideoPlayer.pause();
     this.fireAncestors(
       "$updateLogs",
       `currentTime: ${VideoPlayer.currentTime} duration: ${VideoPlayer.duration} isPlaying: ${VideoPlayer.playing}`

@@ -1,6 +1,6 @@
 {
   "name": "SP Specs Test",
   "identifier": "com.TeraVolt.SPLightningSpecsTest",
-  "version": "0.1.47",
+  "version": "0.1.48",
   "icon": "./static/icon.png"
 }
