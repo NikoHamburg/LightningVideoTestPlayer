@@ -52,6 +52,16 @@ class VideoPlayerTest extends Lightning.Component {
           buttonText: "Skip",
           x: 1400,
         },
+        CloseButton: {
+          type: Button,
+          buttonText: "Close",
+          x: 1550,
+        },
+        ClearButton: {
+          type: Button,
+          buttonText: "Clear",
+          x: 1700,
+        }
       },
     };
   }
@@ -138,6 +148,16 @@ class VideoPlayerTest extends Lightning.Component {
             case 'Skip': {
               VideoPlayer.skip(5);
               this.fireAncestors('$updateLogs', `Skipping 5s`)
+              break;
+            }
+            case 'Close': {
+              VideoPlayer.close();
+              this.fireAncestors('$updateLogs', `Close`)
+              break;
+            }
+            case 'Clear': {
+              VideoPlayer.clear();
+              this.fireAncestors('$updateLogs', `Clear`)
               break;
             }
           }
