@@ -137,10 +137,11 @@ class VideoPlayerTest extends Lightning.Component {
             case "SkipToEnd": {
               this.fireAncestors(
                 "$updateLogs",
-                `Selected -> Skipping to ${VideoPlayer.duration - 3}s of ${
+                `Selected -> SkipToEnd || Skipping to ${VideoPlayer.duration - 3}s of ${
                   VideoPlayer.duration
                 }s`
               );
+              this.isPlaying = false;
               VideoPlayer.seek(VideoPlayer.duration - 3);
               break;
             }
