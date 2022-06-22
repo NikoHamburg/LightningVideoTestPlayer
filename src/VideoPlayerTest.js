@@ -1,6 +1,5 @@
 import { VideoPlayer, Lightning, Registry } from "@lightningjs/sdk";
 import { Button } from "./Button";
-import { Logger } from "./Logger";
 
 class VideoPlayerTest extends Lightning.Component {
   static _template() {
