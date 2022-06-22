@@ -27,43 +27,31 @@ class VideoPlayerTest extends Lightning.Component {
           buttonText: "PlayPause",
           x: 650,
         },
-        StopFirstButton: {
+        SkipToEnd: {
           type: Button,
-          buttonText: "StopFirst",
+          buttonText: "SkipToEnd",
           x: 800,
         },
-        StopLastButton: {
+        Playmode0Button: {
           type: Button,
-          buttonText: "StopLast",
+          buttonText: "Playmode 0",
           x: 950,
         },
-        LoopButton: {
+        Playmode1Button: {
           type: Button,
-          buttonText: "Loop",
+          buttonText: "Playmode 1",
           x: 1100,
         },
-        SeekButton: {
+        Playmode2Button: {
           type: Button,
-          buttonText: "Seek",
+          buttonText: "Playmode 2",
           x: 1250,
         },
-        SkipButton: {
-          type: Button,
-          buttonText: "Skip",
-          x: 1400,
-        },
-        CloseButton: {
-          type: Button,
-          buttonText: "Close",
-          x: 1550,
-        },
-        ClearButton: {
-          type: Button,
-          buttonText: "Clear",
-          x: 1700,
-        }
       },
     };
+  }
+
+  _construct() {
   }
 
   _init() {
@@ -74,11 +62,10 @@ class VideoPlayerTest extends Lightning.Component {
       "http://vf-maf-lng.s3.eu-central-1.amazonaws.com/LNG_MVP_Big_Bunny_AWS_Test.mp4"
     );
     this.buttonIndex = 0;
+    this.playmode = 0;
+    this.hasEnded = false;
+    this.isPlaying = false;
     this._setState("Buttons");
-    // Registry.setTimeout(() => {
-    //   this.fireAncestors('$updateLogs', `isPlaying: ${VideoPlayer.playing}`)
-    //   VideoPlayer.seek(VideoPlayer.duration - 0.5);
-    // }, 2000);
   }
 
   static _states() {
@@ -100,61 +87,82 @@ class VideoPlayerTest extends Lightning.Component {
         _handleEnter() {
           switch (this.tag("Buttons").children[this.buttonIndex].buttonText) {
             case "Play": {
-              this.fireAncestors("$updateLogs", "Selected -> Play");
-              VideoPlayer.play();
+              this.isPlaying = true;
+              this.fireAncestors(
+                "$updateLogs",
+                `Selected -> Play || hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
+              );
+              this.hasEnded && this.playmode === 0
+                ? VideoPlayer.seek(0)
+                : VideoPlayer.play();
               break;
             }
             case "Pause": {
-              this.fireAncestors("$updateLogs", "Selected -> Pause");
+              this.isPlaying = false;
+              this.fireAncestors(
+                "$updateLogs",
+                `Selected -> Pause || hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
+              );
               VideoPlayer.pause();
               break;
             }
             case "Stop": {
-              this.fireAncestors("$updateLogs", "Selected -> Stop");
+              this.fireAncestors(
+                "$updateLogs",
+                `Selected -> Stop || hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
+              );
               VideoPlayer.seek(0);
               break;
             }
             case "PlayPause": {
-              this.fireAncestors("$updateLogs", "Selected -> PlayPause");
-              VideoPlayer.playPause();
+              if (this.isPlaying) {
+                this.isPlaying = false;
+                this.fireAncestors(
+                  "$updateLogs",
+                  `Selected -> Pause from Play/Pause || hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
+                );
+                VideoPlayer.pause();
+              } else {
+                this.isPlaying = true;
+                this.fireAncestors(
+                  "$updateLogs",
+                  `Selected -> Play from Play/Pause || hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
+                );
+                this.hasEnded && this.playmode === 0
+                  ? VideoPlayer.seek(0)
+                  : VideoPlayer.play();
+              }
               break;
             }
-            case "StopFirst": {
-              this.fireAncestors("$updateLogs", "Selected -> stopFirst");
-              VideoPlayer.seek(0);
-              break;
-            }
-            case "StopLast": {
-              this.fireAncestors("$updateLogs", "Selected -> stopLast");
-              VideoPlayer.seek(VideoPlayer.duration - 0.5);
-              break;
-            }
-            case "Loop": {
-              VideoPlayer.loop();
+            case "SkipToEnd": {
               this.fireAncestors(
                 "$updateLogs",
-                `Toggle Loop: loop ${VideoPlayer.looped}`
+                `Selected -> Skipping to ${VideoPlayer.duration - 3}s of ${
+                  VideoPlayer.duration
+                }s`
+              );
+              VideoPlayer.seek(VideoPlayer.duration - 3);
+              break;
+            }
+            case "Playmode 0": {
+              this.playmode = 0;
+              this.fireAncestors(
+                "$updateLogs",
+                `Selected -> Playmode 0: Stop on last frame`
               );
               break;
             }
-            case 'Seek': {
-              VideoPlayer.seek(VideoPlayer.currentTime + 5);
-              this.fireAncestors('$updateLogs', `Seeking + 5s`)
+            case "Playmode 1": {
+              this.playmode = 1;
+              this.fireAncestors(
+                "$updateLogs",
+                `Selected -> Playmode 1: Stop on first frame`
+              );
               break;
             }
-            case 'Skip': {
-              VideoPlayer.skip(5);
-              this.fireAncestors('$updateLogs', `Skipping 5s`)
-              break;
-            }
-            case 'Close': {
-              VideoPlayer.close();
-              this.fireAncestors('$updateLogs', `Close`)
-              break;
-            }
-            case 'Clear': {
-              VideoPlayer.clear();
-              this.fireAncestors('$updateLogs', `Clear`)
+            case "Playmode 2": {
+              this.playmode = 2;
+              this.fireAncestors("$updateLogs", `Selected -> Playmode 2: Loop`);
               break;
             }
           }
@@ -232,12 +240,21 @@ class VideoPlayerTest extends Lightning.Component {
   }
 
   $videoPlayerSeeked() {
-    this.fireAncestors("$updateLogs", "Event: $videoPlayerSeeked");
-    VideoPlayer.pause();
     this.fireAncestors(
       "$updateLogs",
-      `currentTime: ${VideoPlayer.currentTime} duration: ${VideoPlayer.duration} isPlaying: ${VideoPlayer.playing}`
+      `Event: $videoPlayerSeeked | hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
     );
+    if (this.hasEnded) {
+      if (this.isPlaying) {
+        this.hasEnded = false;
+        VideoPlayer.play();
+      } else {
+        this.hasEnded = false;
+        VideoPlayer.pause();
+      }
+    } else {
+      VideoPlayer.pause();
+    }
   }
 
   $videoPlayerSeeking() {
@@ -248,9 +265,49 @@ class VideoPlayerTest extends Lightning.Component {
     this.fireAncestors("$updateLogs", "Event: $videoPlayerStalled");
   }
 
-  // $videoPlayerTimeUpdate() {
-  //   this.fireAncestors("$updateLogs", "Event: $videoPlayerTimeUpdate");
-  // }
+  $videoPlayerTimeUpdate() {
+    // this.fireAncestors(
+    //   "$updateLogs",
+    //   `Event: $videoPlayerTimeUpdate hasEnded: ${this.hasEnded} isPlaying: ${this.isPlaying}`
+    // );
+    if (VideoPlayer.currentTime > VideoPlayer.duration - 1 && !this.hasEnded) {
+      this.hasEnded = true;
+      this.fireAncestors(
+        "$updateLogs",
+        `Custom Event: video has ended: ${this.hasEnded}`
+      );
+      switch (this.playmode) {
+        case 0: {
+          this.isPlaying = false;
+          this.fireAncestors(
+            "$updateLogs",
+            `Playmode: ${this.playmode}  -> stopping on last frame`
+          );
+          VideoPlayer.pause();
+          break;
+        }
+        case 1: {
+          this.isPlaying = false;
+          this.fireAncestors(
+            "$updateLogs",
+            `Playmode: ${this.playmode}  -> stopping on first frame`
+          );
+          VideoPlayer.seek(0);
+          break;
+        }
+        case 2: {
+          this.isPlaying = true;
+          this.fireAncestors(
+            "$updateLogs",
+            `Playmode: ${this.playmode}  -> looping`
+          );
+          VideoPlayer.seek(0);
+          break;
+        }
+      }
+      VideoPlayer.pause();
+    }
+  }
 
   $videoPlayerVolumeChange() {
     this.fireAncestors("$updateLogs", "Event: $videoPlayerVolumeChange");
