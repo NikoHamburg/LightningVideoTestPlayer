@@ -26,7 +26,7 @@ class VideoPlayerTest extends Lightning.Component {
           buttonText: "PlayPause",
           x: 650,
         },
-        SkipToEnd: {
+        SkipToEndButton: {
           type: Button,
           buttonText: "SkipToEnd",
           x: 800,
